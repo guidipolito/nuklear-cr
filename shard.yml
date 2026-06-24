@@ -1,0 +1,9 @@
+name: nuklear
+version: 0.1.0
+
+authors:
+  - guidipolito <guilhermepereiradipolito@hotmail.com>
+
+crystal: '>= 1.20.1'
+
+license: MIT
