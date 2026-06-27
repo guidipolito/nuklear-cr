@@ -1,3 +1,5 @@
+require "../../lib/sdl3/src/sdl3"
+
 @[Link("nuklear")]
 lib LibNK
   alias Size = LibC::SizeT
@@ -57,6 +59,21 @@ lib LibNK
     Text
     Image
     Custom
+  end
+
+  enum TextAlign
+    LEFT     = 0x01
+    CENTERED = 0x02
+    RIGHT    = 0x04
+    TOP      = 0x08
+    MIDDLE   = 0x10
+    BOTTOM   = 0x20
+  end
+
+  enum TextAlignment
+    TEXT_LEFT     = TextAlign::MIDDLE | TextAlign::LEFT
+    TEXT_CENTERED = TextAlign::MIDDLE | TextAlign::CENTERED
+    TEXT_RIGHT    = TextAlign::MIDDLE | TextAlign::RIGHT
   end
 
   struct Memory
@@ -176,10 +193,16 @@ lib LibNK
     char_storage : LibC::Short
   end
   alias DrawList = Void
+
+   alias QueryFontGlyphF =
+    (Handle, Float32, Pointer(UserFontGlyph), UInt32, UInt32) -> Void
   struct UserFont
     userdata : Handle
     height : LibC::Float
     width : TextWidthF
+
+    query : QueryFontGlyphF
+    texture : Handle
   end
   struct Panel
     type : PanelType
@@ -210,6 +233,20 @@ lib LibNK
     NkPanelCombo = 32
     NkPanelMenu = 64
     NkPanelTooltip = 128
+  end
+
+  enum PanelFlags : UInt32
+    Border           = 1 << 0
+    Movable          = 1 << 1
+    Scalable         = 1 << 2
+    Closable         = 1 << 3
+    Minimizable      = 1 << 4
+    NoScrollbar      = 1 << 5
+    Title            = 1 << 6
+    ScrollAutoHide   = 1 << 7
+    Background       = 1 << 8
+    ScaleLeft        = 1 << 9
+    NoInput          = 1 << 10
   end
   struct MenuState
     x : LibC::Float
@@ -1112,7 +1149,7 @@ lib LibNK
   fun image = nk_image(x0 : Pointer(Context), x1 : Image)
   fun image_color = nk_image_color(x0 : Pointer(Context), x1 : Image, x2 : Color)
   fun button_text = nk_button_text(x0 : Pointer(Context), title : Pointer(LibC::Char), len : LibC::Int)
-  fun button_label = nk_button_label(x0 : Pointer(Context), title : Pointer(LibC::Char))
+  fun button_label = nk_button_label(x0 : Pointer(Context), title : Pointer(LibC::Char)) : Bool
   fun button_color = nk_button_color(x0 : Pointer(Context), x1 : Color)
   fun button_symbol = nk_button_symbol(x0 : Pointer(Context), x1 : SymbolType)
   fun button_image = nk_button_image(x0 : Pointer(Context), img : Image)
@@ -1188,6 +1225,38 @@ lib LibNK
   fun propertyi = nk_propertyi(x0 : Pointer(Context), name : Pointer(LibC::Char), min : LibC::Int, val : LibC::Int, max : LibC::Int, step : LibC::Int, inc_per_pixel : LibC::Float) : LibC::Int
   fun propertyf = nk_propertyf(x0 : Pointer(Context), name : Pointer(LibC::Char), min : LibC::Float, val : LibC::Float, max : LibC::Float, step : LibC::Float, inc_per_pixel : LibC::Float) : LibC::Float
   fun propertyd = nk_propertyd(x0 : Pointer(Context), name : Pointer(LibC::Char), min : LibC::Double, val : LibC::Double, max : LibC::Double, step : LibC::Double, inc_per_pixel : LibC::Float) : LibC::Double
+  enum EditFlags : UInt32
+    DEFAULT                 = 0
+    READ_ONLY               = 1 << 0
+    AUTO_SELECT             = 1 << 1
+    SIG_ENTER               = 1 << 2
+    ALLOW_TAB               = 1 << 3
+    NO_CURSOR               = 1 << 4
+    SELECTABLE              = 1 << 5
+    CLIPBOARD               = 1 << 6
+    CTRL_ENTER_NEWLINE      = 1 << 7
+    NO_HORIZONTAL_SCROLL    = 1 << 8
+    ALWAYS_INSERT_MODE      = 1 << 9
+    MULTILINE               = 1 << 10
+    GOTO_END_ON_ACTIVATE    = 1 << 11
+
+  end
+
+  enum EditTypes : UInt32
+    SIMPLE = EditFlags::ALWAYS_INSERT_MODE
+    FIELD  = SIMPLE | EditFlags::SELECTABLE | EditFlags::CLIPBOARD
+    BOX    = EditFlags::ALWAYS_INSERT_MODE | EditFlags::SELECTABLE | EditFlags::MULTILINE | EditFlags::ALLOW_TAB | EditFlags::CLIPBOARD
+    EDITOR = EditFlags::SELECTABLE | EditFlags::MULTILINE | EditFlags::ALLOW_TAB | EditFlags::CLIPBOARD
+  end
+
+  enum EditEvents : UInt32
+    ACTIVE      = 1 << 0
+    INACTIVE    = 1 << 1
+    ACTIVATED   = 1 << 2
+    DEACTIVATED = 1 << 3
+    COMMITTED   = 1 << 4
+  end
+
   fun edit_string = nk_edit_string(x0 : Pointer(Context), x1 : Flags, buffer : Pointer(LibC::Char), len : Pointer(LibC::Int), max : LibC::Int, x5 : PluginFilter)
   fun edit_string_zero_terminated = nk_edit_string_zero_terminated(x0 : Pointer(Context), x1 : Flags, buffer : Pointer(LibC::Char), max : LibC::Int, x4 : PluginFilter)
   fun edit_buffer = nk_edit_buffer(x0 : Pointer(Context), x1 : Flags, x2 : Pointer(TextEdit), x3 : PluginFilter)
@@ -1486,13 +1555,13 @@ lib LibNK
   fun str_get_const = nk_str_get_const(x0 : Pointer(Str)) : Pointer(LibC::Char)
   fun str_len = nk_str_len(x0 : Pointer(Str)) : LibC::Int
   fun str_len_char = nk_str_len_char(x0 : Pointer(Str)) : LibC::Int
-  fun filter_default = nk_filter_default(x0 : Pointer(TextEdit), unicode : UInt32)
-  fun filter_ascii = nk_filter_ascii(x0 : Pointer(TextEdit), unicode : UInt32)
-  fun filter_float = nk_filter_float(x0 : Pointer(TextEdit), unicode : UInt32)
-  fun filter_decimal = nk_filter_decimal(x0 : Pointer(TextEdit), unicode : UInt32)
-  fun filter_hex = nk_filter_hex(x0 : Pointer(TextEdit), unicode : UInt32)
-  fun filter_oct = nk_filter_oct(x0 : Pointer(TextEdit), unicode : UInt32)
-  fun filter_binary = nk_filter_binary(x0 : Pointer(TextEdit), unicode : UInt32)
+  fun filter_default = nk_filter_default(x0 : Pointer(TextEdit), unicode : UInt32) : Bool
+  fun filter_ascii = nk_filter_ascii(x0 : Pointer(TextEdit), unicode : UInt32) : Bool
+  fun filter_float = nk_filter_float(x0 : Pointer(TextEdit), unicode : UInt32) : Bool
+  fun filter_decimal = nk_filter_decimal(x0 : Pointer(TextEdit), unicode : UInt32) : Bool
+  fun filter_hex = nk_filter_hex(x0 : Pointer(TextEdit), unicode : UInt32) : Bool
+  fun filter_oct = nk_filter_oct(x0 : Pointer(TextEdit), unicode : UInt32) : Bool
+  fun filter_binary = nk_filter_binary(x0 : Pointer(TextEdit), unicode : UInt32) : Bool
   fun textedit_init = nk_textedit_init(x0 : Pointer(TextEdit), x1 : Pointer(Allocator), size : Size)
   fun textedit_init_fixed = nk_textedit_init_fixed(x0 : Pointer(TextEdit), memory : Pointer(Void), size : Size)
   fun textedit_free = nk_textedit_free(x0 : Pointer(TextEdit))
@@ -1708,4 +1777,91 @@ lib LibNK
   fun style_item_image = nk_style_item_image(img : Image) : StyleItem
   fun style_item_nine_slice = nk_style_item_nine_slice(slice : NineSlice) : StyleItem
   fun style_item_hide = nk_style_item_hide : StyleItem
+
+
+  struct FontGlyph
+    codepoint : UInt32
+    xadvance, x0, y0, x1, y1, w, h, u0, v0, u1, v1 : LibC::Float
+  end
+
+  enum FontCoordType
+      COORD_UV   #< texture coordinates inside font glyphs are clamped between 0-1 */
+      COORD_PIXEL # texture coordinates inside font glyphs are in absolute pixel */
+  end
+
+  struct BakedFont
+    height, ascent, descent : LibC::Float
+    glyph_offset, glyph_count : UInt32
+  end
+
+  struct FontConfig
+    next : Pointer(FontConfig)
+    ttf_blob : Pointer(Void)
+    ttf_size : Size
+    ttf_data_owned_by_atlas : LibC::UChar
+    merge_mode : LibC::UChar
+    pixel_snap : LibC::UChar
+    oversample_v, oversample_h : LibC::UChar
+    padding : StaticArray(LibC::UChar, 3)
+
+    size : LibC::Float
+    coord_type : FontCoordType
+    spacing : Vec2
+    range : Pointer(UInt32)
+    font : Pointer(BakedFont)
+    fallback_glyph : UInt32
+    n : Pointer(FontConfig)
+    p : Pointer(FontConfig)
+  end
+  struct Font
+    next : Pointer(Font)
+    handle : UserFont
+    info : BakedFont
+    scale : LibC::Float
+    glyphs : Pointer(FontGlyph)
+    fallback : Pointer(FontGlyph)
+    fallback_codepoint : UInt32
+    texture : Handle
+    config : Pointer(FontConfig)
+  end
+
+  enum FontAtlasFormat
+    FONT_ATLAS_ALPHA8
+    FONT_ATLAS_RGBA32
+  end
+
+  struct FontAtlas
+    pixel : Pointer(Void)
+    tex_width : LibC::Int
+    tex_height : LibC::Int
+    permanent : Allocator
+    temporary : Allocator
+    custom : Recti
+    cursors : StaticArray(Pointer(Cursor), 7)
+
+    glyph_count : LibC::Int
+    nk_font_glyph : Pointer(FontGlyph)
+    nk_font : Pointer(Glyph)
+  end
+
+  fun font_atlas_init_default = nk_font_atlas_init_default(Pointer(FontAtlas)) : Void
+  # fun font_atlas_init(Pointer(FontAtlas), ) TODO
+  fun font_atlas_begin = nk_font_atlas_begin(atlas : Pointer(FontAtlas)) : Void
+  fun font_atlas_add_default = nk_font_atlas_add_default(atlas : FontAtlas*, pixel_height : LibC::Float, font_config : FontConfig*) : Font*
+  fun font_atlas_add_from_file = nk_font_atlas_add_from_file(atlas : Pointer(FontAtlas), file_path : LibC::Char*, height : LibC::Float, x0: FontConfig*) : Font*
+  fun font_atlas_bake = nk_font_atlas_bake(x0: FontAtlas*, width : LibC::Int*, height : LibC::Int*, x1: FontAtlasFormat) : Pointer(Void)
+  fun font_atlas_end = nk_font_atlas_end(x0: FontAtlas*, tex: Handle, x1: DrawNullTexture*)
+
+  fun font_config = nk_font_config(pixel_height : LibC::Float) : FontConfig
+
+
+  # SDL3 Renderer
+  fun sdl_init = nk_sdl_init(win: LibSdl3::Window*, renderer : LibSdl3::Renderer*, allocator : Allocator) : Context*
+  fun sdl_allocator = nk_sdl_allocator() : Allocator
+  fun sdl_font_stash_begin = nk_sdl_font_stash_begin(ctx : Context*) : FontAtlas*
+  fun sdl_font_stash_end = nk_sdl_font_stash_end(ctx : Context*)
+  fun sdl_render = nk_sdl_render(ctx : Context*, aa : AntiAliasing)
+
+  fun sdl_handle_event = nk_sdl_handle_event(ctx : Context*, event : LibSdl3::Event*);
+  fun sdl_update_TextInput = nk_sdl_update_TextInput(ctx : Context*)
 end
