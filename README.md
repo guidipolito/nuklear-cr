@@ -1,6 +1,6 @@
 # nuklear
 
-TODO: Write a description here
+Nuklear bindings for SDL3 renderer and SDL3 OpenGL3
 
 ## Installation
 
@@ -9,7 +9,7 @@ TODO: Write a description here
    ```yaml
    dependencies:
      nuklear:
-       github: your-github-user/nuklear
+       github: dipolito/nuklearcr
    ```
 
 2. Run `shards install`
