@@ -7,14 +7,12 @@
 #include <assert.h>
 #include <limits.h>
 #include <time.h>
-
 #include <SDL3/SDL.h>
 
 /* This demo uses "main callbacks" which are new in SDL3
  * Those provide highly portable entry point and event loop for the app
  * see: https://wiki.libsdl.org/SDL3/README-main-functions
  * */
-#define SDL_MAIN_USE_CALLBACKS
 /* #include <SDL3/SDL_main.h> */
 
 /* ===============================================================
@@ -32,16 +30,13 @@
  * so you may wish to use that instead of font baking */
 #define NK_INCLUDE_FONT_BAKING
 #define NK_INCLUDE_DEFAULT_FONT
+#define NK_INCLUDE_DEFAULT_ALLOCATOR
 
-/* note that sdl3_renderer comes with nk_sdl_allocator()
- * and you probably want to use that allocator instead of the default ones */
 /*#define NK_INCLUDE_DEFAULT_ALLOCATOR*/
 
 /* mandatory: sdl3_renderer depends on those defines */
 #define NK_INCLUDE_COMMAND_USERDATA
 #define NK_INCLUDE_VERTEX_BUFFER_OUTPUT
-
-
 /* We can re-use the types provided by SDL which are extremely portable,
  * so there is no need for Nuklear to detect those on its own */
 /*#define NK_INCLUDE_FIXED_TYPES*/
@@ -112,74 +107,10 @@ static char* nk_sdl_dtoa(char *str, double d);
 #define NK_IMPLEMENTATION
 #include "../Nuklear/nuklear.h"
 #define NK_SDL3_RENDERER_IMPLEMENTATION
-//#include "../Nuklear/demo/sdl3_renderer/nuklear_sdl3_renderer.h"
+#include "../Nuklear/demo/sdl3_renderer/nuklear_sdl3_renderer.h"
 
-#define WINDOW_WIDTH 1200
-#define WINDOW_HEIGHT 800
-
-
-/* ===============================================================
- *
- *                          EXAMPLE
- *
- * ===============================================================*/
-/* These are some code examples to provide a small overview of what can be
- * done with this library. To try out an example uncomment the defines */
-/*#define INCLUDE_ALL */
-#define INCLUDE_STYLE 
-/* #define INCLUDE_CALCULATOR */
-#define INCLUDE_CANVAS 
-#define INCLUDE_OVERVIEW
-#define INCLUDE_CONFIGURATOR 
-#define INCLUDE_NODE_EDITOR 
-
-#ifdef INCLUDE_ALL
-    #define INCLUDE_STYLE
-    #define INCLUDE_CALCULATOR
-    #define INCLUDE_CANVAS
-    #define INCLUDE_OVERVIEW
-    #define INCLUDE_CONFIGURATOR
-    #define INCLUDE_NODE_EDITOR
-#endif
-
-#ifdef INCLUDE_STYLE
-    #include "../Nuklear/demo/common/style.c"
-#endif
-#ifdef INCLUDE_CALCULATOR
-    #include "../Nuklear/demo/common/calculator.c"
-#endif
-#ifdef INCLUDE_CANVAS
-    #include "../Nuklear/demo/common/canvas.c"
-#endif
-#ifdef INCLUDE_OVERVIEW
-    #include "../Nuklear/demo/common/overview.c"
-#endif
-#ifdef INCLUDE_CONFIGURATOR
-    #include "../Nuklear/demo/common/style_configurator.c"
-#endif
-#ifdef INCLUDE_NODE_EDITOR
-    #include "../Nuklear/demo/common/node_editor.c"
-#endif
-
-/* ===============================================================
- *
- *                          wrapper
- *
- * ===============================================================*/
-
-struct nk_sdl_app {
-    SDL_Window* window;
-    SDL_Renderer* renderer;
-    struct nk_context * ctx;
-    struct nk_colorf bg;
-    enum nk_anti_aliasing AA;
-};
-
-static char*
-nk_sdl_dtoa(char *str, double d)
+static char* nk_sdl_dtoa(char *str, double d)
 {
-    NK_ASSERT(str);
-    if (!str) return NULL;
-    (void)SDL_snprintf(str, 99999, "%.17g", d);
+    SDL_snprintf(str, NK_MAX_NUMBER_BUFFER, "%.17g", d);
     return str;
-};
+}
