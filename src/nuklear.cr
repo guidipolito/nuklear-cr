@@ -1,8 +1,4 @@
-@[Include(
-  "nuklear.h",
-  prefix: %w(nk_),
-)]
-@[Link("libnuklear")]
-lib LibNK
+require "./nuklear/libnuklear"
+module Nuklear
+  VERSION = "0.1.0"
 end
-
