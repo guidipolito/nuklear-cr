@@ -1,0 +1,201 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap');
+
+:root{
+  --md-primary-fg-color: #1e1e1e;
+
+  --md-code-bg-color: #10232f;
+  --md-code-fg-color: #d9f4ff;
+
+  --md-code-hl-comment-color: #79a2b3;
+  --md-code-hl-punctuation-color: #8bb8c9;
+
+  --md-code-hl-keyword-color: #4fc3f7;
+  --md-code-hl-operator-color: #80cbc4;
+
+  --md-code-hl-variable-color: #d9f4ff;
+  --md-code-hl-string-color: #7ee787;
+  --md-code-hl-number-color: #ffd166;
+  --md-code-hl-function-color: #c792ea;
+
+  --md-code-hl-name-color: #81d4fa;
+  --md-code-hl-constant-color: #ffb74d;
+  --md-code-hl-special-color: #4dd0e1;
+
+
+
+  --md-default-bg-color: black;
+  --md-default-fg-color--light: white;
+}
+
+body{
+  background-image: url('/guidipolito/nuklear-cr/img/bg.jpg') !important;
+  background-attachment: fixed;
+  background-size: cover;
+  height: 100vh;
+  overflow: hidden;
+  font-family: "Lato", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+.md-typeset code{
+  background: linear-gradient(to bottom, rgba(0,0,0,0.65) 0%,rgba(0,0,0,0) 50%,rgba(0,0,0,0.65) 100%);
+  border-radius: 0;
+}
+.md-content a{
+  color: #39f2ff;
+}
+.md-content a:hover{
+  text-shadow: 0 0 5px #39f2ff;
+  color: white;
+}
+.headerlink{
+  color: white !important;
+}
+.md-header{
+  background: none !important;
+  box-shadow: none !important;
+  position: unset;
+}
+
+.md-container{
+  height: calc(100vh - 70px);
+  overflow: hidden;
+  flex-direction: column;
+  padding-bottom: 15px;
+}
+
+
+.md-main{
+  flex: 1;
+  min-height: 0;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+}
+
+.md-header__inner{
+  background: linear-gradient(to bottom,#fff 0,rgba(129,129,129,.75) 3%,rgba(56,56,56,.75) 50%,rgba(27,27,27,.75) 50%) !important;
+  margin-top: 15px;
+  border: 1px solid #000;
+  border-radius: 3px;
+}
+
+.md-main__inner{
+  margin-top: 0;
+}
+.md-nav__title, .md-footer-meta__inner{
+  background: linear-gradient(to bottom,#fff 0,rgba(129,129,129,.75) 3%,rgba(56,56,56,.75) 50%,rgba(27,27,27,.75) 50%) !important;
+  color: white;
+  border-radius: 3px;
+  border: 1px solid #000;
+  box-shadow: 2px 2px 3px rgba(0,0,0,.8) !important;
+}
+.md-nav__title{
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+.md-sidebar{
+  position: unset;
+  height: 100%;
+}
+.md-sidebar--primary{
+  padding-right: 0.75rem;
+}
+.md-sidebar--secondary{
+  padding-left: 0.75rem;
+}
+.md-sidebar__scrollwrap{
+  box-shadow: 2px 2px 3px rgba(0,0,0,.8);
+  background: linear-gradient(to bottom,rgba(26,26,26,.8),rgba(22,22,22,.8) 95%) !important;
+  border: 1px solid rgba(236,242,249,.2);
+  color: white;
+  height: 100% !important;
+}
+.main__inner{
+  height: 100%;
+}
+.md-content{
+  height: 100%;
+  overflow: auto;
+  background: linear-gradient(to bottom,rgba(26,26,26,.9),rgba(22,22,22,.95) 95%);
+  color: white;
+  border-radius: 3px;
+  border: 1px solid #000;
+  box-shadow: 4px 4px 5px rgba(0,0,0,.8);
+  padding-bottom: 75vh;
+}
+
+.md-sidebar__scrollwrap{
+  height: 100% important;
+}
+
+.md-main .md-sidebar{
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+.md-typeset h1{
+  color: white;
+}
+
+.md-footer, .md-footer-meta{
+  background-color: unset;
+}
+
+.md-nav__link{
+  color: white !important;
+  text-shadow: 0 0 3px #000;
+  background: linear-gradient(to bottom,rgba(255,255,255,.25) 0,rgba(117,117,117,.2) 20%,rgba(92,92,92,.2) 50%,rgba(43,43,43,.3) 50%,rgba(161,161,161,.3) 100%);
+  padding: 3px 15px;
+  border: 1px solid #000;
+  transition: 0.3s;
+  border-radius: 3px;
+}
+.md-nav__link:hover{
+  background: linear-gradient(to bottom,rgba(255,255,255,.25) 0,rgba(117,117,117,.2) 20%,rgba(92,92,92,.2) 50%,rgba(43,43,43,.3) 50%,rgba(161,161,161,.3) 100%);
+}
+.md-sidebar--primary .md-nav__link.md-nav__link--active, .fruti-toc-selected{
+  background: linear-gradient(to bottom,rgba(129,129,129,.2) 0,rgba(92,92,92,.2) 50%,rgba(29,73,23,.3) 50%,rgb(136, 208, 251) 100%) !important;
+  scroll-margin-top: 80px;
+}
+.md-sidebar__scrollwrap{
+  scrollbar-color: unset;
+}
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #c7c7c7 transparent;
+}
+
+/* Chrome / Edge / Safari */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    180deg,
+    #7ddcff,
+    #2aa7ff
+  );
+  border-radius: 10px;
+  border: 3px solid #eaf7ff;
+}
+
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+@media screen and (max-width: 76.2344em){
+  body{
+    padding: 0 5px;
+  }
+  .md-sidebar--primary{
+    position: fixed;
+  }
+}
