@@ -309,6 +309,10 @@ lib LibNK
     NkChartColumn = 1
     NkChartMax = 2
   end
+  enum ChartEvent
+    Hovering = 1
+    Clicked = 2
+  end
   struct Context
     input : Input
     style : Style
@@ -1015,8 +1019,8 @@ lib LibNK
   end
   fun _begin = nk__begin(x0 : Pointer(Context)) : Pointer(Command)
   fun _next = nk__next(x0 : Pointer(Context), x1 : Pointer(Command)) : Pointer(Command)
-  fun begin = nk_begin(ctx : Pointer(Context), title : Pointer(LibC::Char), bounds : Rect, flags : Flags)
-  fun begin_titled = nk_begin_titled(ctx : Pointer(Context), name : Pointer(LibC::Char), title : Pointer(LibC::Char), bounds : Rect, flags : Flags)
+  fun begin = nk_begin(ctx : Pointer(Context), title : Pointer(LibC::Char), bounds : Rect, flags : Flags) : Bool
+  fun begin_titled = nk_begin_titled(ctx : Pointer(Context), name : Pointer(LibC::Char), title : Pointer(LibC::Char), bounds : Rect, flags : Flags) : Bool
   fun _end = nk_end(ctx : Pointer(Context))
   fun window_find = nk_window_find(ctx : Pointer(Context), name : Pointer(LibC::Char)) : Pointer(Window)
   fun window_get_bounds = nk_window_get_bounds(ctx : Pointer(Context)) : Rect
@@ -1033,11 +1037,11 @@ lib LibNK
   fun window_get_scroll = nk_window_get_scroll(ctx : Pointer(Context), offset_x : Pointer(Void), offset_y : Pointer(Void))
   fun window_has_focus = nk_window_has_focus(ctx : Pointer(Context))
   fun window_is_hovered = nk_window_is_hovered(ctx : Pointer(Context))
-  fun window_is_collapsed = nk_window_is_collapsed(ctx : Pointer(Context), name : Pointer(LibC::Char))
-  fun window_is_closed = nk_window_is_closed(ctx : Pointer(Context), name : Pointer(LibC::Char))
-  fun window_is_hidden = nk_window_is_hidden(ctx : Pointer(Context), name : Pointer(LibC::Char))
-  fun window_is_active = nk_window_is_active(ctx : Pointer(Context), name : Pointer(LibC::Char))
-  fun window_is_any_hovered = nk_window_is_any_hovered(ctx : Pointer(Context))
+  fun window_is_collapsed = nk_window_is_collapsed(ctx : Pointer(Context), name : Pointer(LibC::Char)) : Bool
+  fun window_is_closed = nk_window_is_closed(ctx : Pointer(Context), name : Pointer(LibC::Char)) : Bool
+  fun window_is_hidden = nk_window_is_hidden(ctx : Pointer(Context), name : Pointer(LibC::Char)) : Bool
+  fun window_is_active = nk_window_is_active(ctx : Pointer(Context), name : Pointer(LibC::Char)) : Bool
+  fun window_is_any_hovered = nk_window_is_any_hovered(ctx : Pointer(Context)) : Bool
   fun item_is_any_active = nk_item_is_any_active(ctx : Pointer(Context))
   fun window_set_bounds = nk_window_set_bounds(ctx : Pointer(Context), name : Pointer(LibC::Char), bounds : Rect)
   fun window_set_position = nk_window_set_position(ctx : Pointer(Context), name : Pointer(LibC::Char), pos : Vec2)
@@ -1094,14 +1098,15 @@ lib LibNK
   fun group_scrolled_end = nk_group_scrolled_end(x0 : Pointer(Context))
   fun group_get_scroll = nk_group_get_scroll(x0 : Pointer(Context), id : Pointer(LibC::Char), x_offset : Pointer(Void), y_offset : Pointer(Void))
   fun group_set_scroll = nk_group_set_scroll(x0 : Pointer(Context), id : Pointer(LibC::Char), x_offset : UInt32, y_offset : UInt32)
-  fun tree_push_hashed = nk_tree_push_hashed(x0 : Pointer(Context), x1 : TreeType, title : Pointer(LibC::Char), initial_state : CollapseStates, hash : Pointer(LibC::Char), len : LibC::Int, seed : LibC::Int)
+  #fun tree_push = nk_tree_push(ctx : Pointer(Context), type : TreeType, title : Pointer(LibC::Char), state : CollapseStates)
+  fun tree_push_hashed = nk_tree_push_hashed(x0 : Pointer(Context), x1 : TreeType, title : Pointer(LibC::Char), initial_state : CollapseStates, hash : Pointer(LibC::Char), len : LibC::Int, seed : LibC::Int) : Bool
   enum TreeType
     NkTreeNode = 0
     NkTreeTab = 1
   end
   fun tree_image_push_hashed = nk_tree_image_push_hashed(x0 : Pointer(Context), x1 : TreeType, x2 : Image, title : Pointer(LibC::Char), initial_state : CollapseStates, hash : Pointer(LibC::Char), len : LibC::Int, seed : LibC::Int)
   fun tree_pop = nk_tree_pop(x0 : Pointer(Context))
-  fun tree_state_push = nk_tree_state_push(x0 : Pointer(Context), x1 : TreeType, title : Pointer(LibC::Char), state : Pointer(CollapseStates))
+  fun tree_state_push = nk_tree_state_push(x0 : Pointer(Context), x1 : TreeType, title : Pointer(LibC::Char), state : Pointer(CollapseStates)) : Bool
   fun tree_state_image_push = nk_tree_state_image_push(x0 : Pointer(Context), x1 : TreeType, x2 : Image, title : Pointer(LibC::Char), state : Pointer(CollapseStates))
   fun tree_state_pop = nk_tree_state_pop(x0 : Pointer(Context))
   fun tree_element_push_hashed = nk_tree_element_push_hashed(x0 : Pointer(Context), x1 : TreeType, title : Pointer(LibC::Char), initial_state : CollapseStates, selected : Pointer(Void), hash : Pointer(LibC::Char), len : LibC::Int, seed : LibC::Int)
@@ -1130,9 +1135,9 @@ lib LibNK
   fun widget_size = nk_widget_size(x0 : Pointer(Context)) : Vec2
   fun widget_width = nk_widget_width(x0 : Pointer(Context)) : LibC::Float
   fun widget_height = nk_widget_height(x0 : Pointer(Context)) : LibC::Float
-  fun widget_is_hovered = nk_widget_is_hovered(x0 : Pointer(Context))
-  fun widget_is_mouse_clicked = nk_widget_is_mouse_clicked(x0 : Pointer(Context), x1 : Buttons)
-  fun widget_has_mouse_click_down = nk_widget_has_mouse_click_down(x0 : Pointer(Context), x1 : Buttons, down : Bool)
+  fun widget_is_hovered = nk_widget_is_hovered(x0 : Pointer(Context)) : Bool
+  fun widget_is_mouse_clicked = nk_widget_is_mouse_clicked(x0 : Pointer(Context), x1 : Buttons) : Bool
+  fun widget_has_mouse_click_down = nk_widget_has_mouse_click_down(x0 : Pointer(Context), x1 : Buttons, down : Bool) : Bool
   fun spacing = nk_spacing(x0 : Pointer(Context), cols : LibC::Int)
   fun widget_disable_begin = nk_widget_disable_begin(ctx : Pointer(Context))
   fun widget_disable_end = nk_widget_disable_end(ctx : Pointer(Context))
@@ -1166,7 +1171,7 @@ lib LibNK
   fun button_set_behavior = nk_button_set_behavior(x0 : Pointer(Context), x1 : ButtonBehavior)
   fun button_push_behavior = nk_button_push_behavior(x0 : Pointer(Context), x1 : ButtonBehavior)
   fun button_pop_behavior = nk_button_pop_behavior(x0 : Pointer(Context))
-  fun check_label = nk_check_label(x0 : Pointer(Context), x1 : Pointer(LibC::Char), active : Bool)
+  fun check_label = nk_check_label(x0 : Pointer(Context), x1 : Pointer(LibC::Char), active : Bool) : Bool
   fun check_text = nk_check_text(x0 : Pointer(Context), x1 : Pointer(LibC::Char), x2 : LibC::Int, active : Bool)
   fun check_text_align = nk_check_text_align(x0 : Pointer(Context), x1 : Pointer(LibC::Char), x2 : LibC::Int, active : Bool, widget_alignment : Flags, text_alignment : Flags)
   fun check_flags_label = nk_check_flags_label(x0 : Pointer(Context), x1 : Pointer(LibC::Char), flags : LibC::UInt, value : LibC::UInt) : LibC::UInt
@@ -1179,9 +1184,9 @@ lib LibNK
   fun checkbox_flags_text = nk_checkbox_flags_text(x0 : Pointer(Context), x1 : Pointer(LibC::Char), x2 : LibC::Int, flags : Pointer(LibC::UInt), value : LibC::UInt)
   fun radio_label = nk_radio_label(x0 : Pointer(Context), x1 : Pointer(LibC::Char), active : Pointer(Void))
   fun radio_label_align = nk_radio_label_align(ctx : Pointer(Context), label : Pointer(LibC::Char), active : Pointer(Void), widget_alignment : Flags, text_alignment : Flags)
-  fun radio_text = nk_radio_text(x0 : Pointer(Context), x1 : Pointer(LibC::Char), x2 : LibC::Int, active : Pointer(Void))
+  fun radio_text = nk_radio_text(x0 : Pointer(Context), x1 : Pointer(LibC::Char), x2 : LibC::Int, active : Pointer(Void)) : LibC::Int
   fun radio_text_align = nk_radio_text_align(ctx : Pointer(Context), text : Pointer(LibC::Char), len : LibC::Int, active : Pointer(Void), widget_alignment : Flags, text_alignment : Flags)
-  fun option_label = nk_option_label(x0 : Pointer(Context), x1 : Pointer(LibC::Char), active : Bool)
+  fun option_label = nk_option_label(x0 : Pointer(Context), x1 : Pointer(LibC::Char), active : Bool) : Bool
   fun option_label_align = nk_option_label_align(ctx : Pointer(Context), label : Pointer(LibC::Char), active : Bool, widget_alignment : Flags, text_alignment : Flags)
   fun option_text = nk_option_text(x0 : Pointer(Context), x1 : Pointer(LibC::Char), x2 : LibC::Int, active : Bool)
   fun option_text_align = nk_option_text_align(ctx : Pointer(Context), text : Pointer(LibC::Char), len : LibC::Int, is_active : Bool, widget_alignment : Flags, text_alignment : Flags)
@@ -1265,11 +1270,11 @@ lib LibNK
   fun chart_add_slot = nk_chart_add_slot(ctx : Pointer(Context), x1 : ChartType, count : LibC::Int, min_value : LibC::Float, max_value : LibC::Float)
   fun chart_add_slot_colored = nk_chart_add_slot_colored(ctx : Pointer(Context), x1 : ChartType, x2 : Color, active : Color, count : LibC::Int, min_value : LibC::Float, max_value : LibC::Float)
   fun chart_push = nk_chart_push(x0 : Pointer(Context), x1 : LibC::Float)
-  fun chart_push_slot = nk_chart_push_slot(x0 : Pointer(Context), x1 : LibC::Float, x2 : LibC::Int)
+  fun chart_push_slot = nk_chart_push_slot(x0 : Pointer(Context), x1 : LibC::Float, x2 : LibC::Int) : ChartEvent
   fun chart_end = nk_chart_end(x0 : Pointer(Context))
   fun plot = nk_plot(x0 : Pointer(Context), x1 : ChartType, values : Pointer(LibC::Float), count : LibC::Int, offset : LibC::Int)
   fun plot_function = nk_plot_function(x0 : Pointer(Context), x1 : ChartType, userdata : Pointer(Void), value_getter : Pointer(Void), LibC::Int -> LibC::Float, count : LibC::Int, offset : LibC::Int)
-  fun popup_begin = nk_popup_begin(x0 : Pointer(Context), x1 : PopupType, x2 : Pointer(LibC::Char), x3 : Flags, bounds : Rect)
+  fun popup_begin = nk_popup_begin(x0 : Pointer(Context), x1 : PopupType, x2 : Pointer(LibC::Char), x3 : Flags, bounds : Rect) : Bool
   enum PopupType
     NkPopupStatic = 0
     NkPopupDynamic = 1
@@ -1303,11 +1308,11 @@ lib LibNK
   fun combo_item_symbol_text = nk_combo_item_symbol_text(x0 : Pointer(Context), x1 : SymbolType, x2 : Pointer(LibC::Char), x3 : LibC::Int, alignment : Flags)
   fun combo_close = nk_combo_close(x0 : Pointer(Context))
   fun combo_end = nk_combo_end(x0 : Pointer(Context))
-  fun contextual_begin = nk_contextual_begin(x0 : Pointer(Context), x1 : Flags, x2 : Vec2, trigger_bounds : Rect)
-  fun contextual_item_text = nk_contextual_item_text(x0 : Pointer(Context), x1 : Pointer(LibC::Char), x2 : LibC::Int, align : Flags)
-  fun contextual_item_label = nk_contextual_item_label(x0 : Pointer(Context), x1 : Pointer(LibC::Char), align : Flags)
-  fun contextual_item_image_label = nk_contextual_item_image_label(x0 : Pointer(Context), x1 : Image, x2 : Pointer(LibC::Char), alignment : Flags)
-  fun contextual_item_image_text = nk_contextual_item_image_text(x0 : Pointer(Context), x1 : Image, x2 : Pointer(LibC::Char), len : LibC::Int, alignment : Flags)
+  fun contextual_begin = nk_contextual_begin(x0 : Pointer(Context), x1 : Flags, x2 : Vec2, trigger_bounds : Rect) : Bool
+  fun contextual_item_text = nk_contextual_item_text(x0 : Pointer(Context), x1 : Pointer(LibC::Char), x2 : LibC::Int, align : Flags) : Bool
+  fun contextual_item_label = nk_contextual_item_label(x0 : Pointer(Context), x1 : Pointer(LibC::Char), align : Flags) : Bool
+  fun contextual_item_image_label = nk_contextual_item_image_label(x0 : Pointer(Context), x1 : Image, x2 : Pointer(LibC::Char), alignment : Flags) : Bool
+  fun contextual_item_image_text = nk_contextual_item_image_text(x0 : Pointer(Context), x1 : Image, x2 : Pointer(LibC::Char), len : LibC::Int, alignment : Flags) : Bool
   fun contextual_item_symbol_label = nk_contextual_item_symbol_label(x0 : Pointer(Context), x1 : SymbolType, x2 : Pointer(LibC::Char), alignment : Flags)
   fun contextual_item_symbol_text = nk_contextual_item_symbol_text(x0 : Pointer(Context), x1 : SymbolType, x2 : Pointer(LibC::Char), x3 : LibC::Int, alignment : Flags)
   fun contextual_close = nk_contextual_close(x0 : Pointer(Context))
@@ -1317,13 +1322,13 @@ lib LibNK
   fun do_tooltip = nk_do_tooltip(x0 : Pointer(Context), x1 : Pointer(LibC::Char), x2 : Rect)
   fun do_tooltip_delay = nk_do_tooltip_delay(x0 : Pointer(Context), x1 : Pointer(LibC::Char), x2 : Rect, x3 : Pointer(LibC::Float))
   fun do_tooltip_delay_clicked = nk_do_tooltip_delay_clicked(x0 : Pointer(Context), x1 : Pointer(LibC::Char), x2 : Rect, timer : Pointer(LibC::Float), x4 : Pointer(Void))
-  fun tooltip_begin = nk_tooltip_begin(x0 : Pointer(Context), width : LibC::Float)
-  fun tooltip_begin_offset = nk_tooltip_begin_offset(x0 : Pointer(Context), x1 : LibC::Float, x2 : TooltipPos, x3 : Vec2)
+  fun tooltip_begin = nk_tooltip_begin(x0 : Pointer(Context), width : LibC::Float) : Bool
+  fun tooltip_begin_offset = nk_tooltip_begin_offset(x0 : Pointer(Context), x1 : LibC::Float, x2 : TooltipPos, x3 : Vec2) : Bool
   fun tooltip_end = nk_tooltip_end(x0 : Pointer(Context))
   fun menubar_begin = nk_menubar_begin(x0 : Pointer(Context))
   fun menubar_end = nk_menubar_end(x0 : Pointer(Context))
   fun menu_begin_text = nk_menu_begin_text(x0 : Pointer(Context), title : Pointer(LibC::Char), title_len : LibC::Int, align : Flags, size : Vec2)
-  fun menu_begin_label = nk_menu_begin_label(x0 : Pointer(Context), x1 : Pointer(LibC::Char), align : Flags, size : Vec2)
+  fun menu_begin_label = nk_menu_begin_label(x0 : Pointer(Context), x1 : Pointer(LibC::Char), align : Flags, size : Vec2) : Bool
   fun menu_begin_image = nk_menu_begin_image(x0 : Pointer(Context), x1 : Pointer(LibC::Char), x2 : Image, size : Vec2)
   fun menu_begin_image_text = nk_menu_begin_image_text(x0 : Pointer(Context), x1 : Pointer(LibC::Char), x2 : LibC::Int, align : Flags, x4 : Image, size : Vec2)
   fun menu_begin_image_label = nk_menu_begin_image_label(x0 : Pointer(Context), x1 : Pointer(LibC::Char), align : Flags, x3 : Image, size : Vec2)
@@ -1331,7 +1336,7 @@ lib LibNK
   fun menu_begin_symbol_text = nk_menu_begin_symbol_text(x0 : Pointer(Context), x1 : Pointer(LibC::Char), x2 : LibC::Int, align : Flags, x4 : SymbolType, size : Vec2)
   fun menu_begin_symbol_label = nk_menu_begin_symbol_label(x0 : Pointer(Context), x1 : Pointer(LibC::Char), align : Flags, x3 : SymbolType, size : Vec2)
   fun menu_item_text = nk_menu_item_text(x0 : Pointer(Context), x1 : Pointer(LibC::Char), x2 : LibC::Int, align : Flags)
-  fun menu_item_label = nk_menu_item_label(x0 : Pointer(Context), x1 : Pointer(LibC::Char), alignment : Flags)
+  fun menu_item_label = nk_menu_item_label(x0 : Pointer(Context), x1 : Pointer(LibC::Char), alignment : Flags) : Bool
   fun menu_item_image_label = nk_menu_item_image_label(x0 : Pointer(Context), x1 : Image, x2 : Pointer(LibC::Char), alignment : Flags)
   fun menu_item_image_text = nk_menu_item_image_text(x0 : Pointer(Context), x1 : Image, x2 : Pointer(LibC::Char), len : LibC::Int, alignment : Flags)
   fun menu_item_symbol_text = nk_menu_item_symbol_text(x0 : Pointer(Context), x1 : SymbolType, x2 : Pointer(LibC::Char), x3 : LibC::Int, alignment : Flags)
@@ -1454,8 +1459,8 @@ lib LibNK
   fun color_hsva_bv = nk_color_hsva_bv(hsva_out : Pointer(Void), x1 : Color)
   fun color_hsva_f = nk_color_hsva_f(out_h : Pointer(LibC::Float), out_s : Pointer(LibC::Float), out_v : Pointer(LibC::Float), out_a : Pointer(LibC::Float), x4 : Color)
   fun color_hsva_fv = nk_color_hsva_fv(hsva_out : Pointer(LibC::Float), x1 : Color)
-  fun handle_ptr = nk_handle_ptr(x0 : Pointer(Void))
-  fun handle_id = nk_handle_id(x0 : LibC::Int)
+  fun handle_ptr = nk_handle_ptr(x0 : Pointer(Void)) : Handle
+  fun handle_id = nk_handle_id(x0 : LibC::Int) : Handle
   fun image_handle = nk_image_handle(x0 : Handle) : Image
   fun image_ptr = nk_image_ptr(x0 : Pointer(Void)) : Image
   fun image_id = nk_image_id(x0 : LibC::Int) : Image
