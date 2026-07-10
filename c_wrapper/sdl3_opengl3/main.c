@@ -6,8 +6,10 @@
 #include <math.h>
 #include <assert.h>
 #include <limits.h>
+#include <stddef.h>
 #include <time.h>
 #include <SDL3/SDL.h>
+#include "./glad.h"
 
 /* This demo uses "main callbacks" which are new in SDL3
  * Those provide highly portable entry point and event loop for the app
@@ -105,9 +107,10 @@ static char* nk_sdl_dtoa(char *str, double d);
 
 
 #define NK_IMPLEMENTATION
-#include "../Nuklear/nuklear.h"
-#define NK_SDL3_RENDERER_IMPLEMENTATION
-#include "../Nuklear/demo/sdl3_renderer/nuklear_sdl3_renderer.h"
+#include "../../Nuklear/nuklear.h"
+
+#define NK_SDL_GL3_IMPLEMENTATION
+#include "./nuklear_sdl3_gl3.h"
 
 static char* nk_sdl_dtoa(char *str, double d)
 {
