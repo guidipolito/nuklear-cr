@@ -9,7 +9,7 @@ Nuklear bindings for SDL3 renderer and SDL3 OpenGL3
    ```yaml
    dependencies:
      nuklear:
-       github: dipolito/nuklear-cr
+       github: guidipolito/nuklear-cr
    ```
 
 2. Run `shards install`
@@ -17,7 +17,6 @@ Nuklear bindings for SDL3 renderer and SDL3 OpenGL3
 ## Usage
 
 ```crystal
-
 Sdl3.init(LibSdl3::InitFlags::Video) do
   # ====== Open sdl window
   window = Sdl3::Window.new("01-Clear", 640, 480, Sdl3::Window::Flags::None)
@@ -77,12 +76,6 @@ Sdl3.init(LibSdl3::InitFlags::Video) do
   end
 end
 ```
-
-TODO: Write usage instructions here
-
-## Development
-
-TODO: Write development instructions here
 
 ## Contributing
 
