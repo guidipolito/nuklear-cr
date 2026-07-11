@@ -159,6 +159,9 @@ body{
 .md-sidebar__scrollwrap{
   scrollbar-color: unset;
 }
+details{
+  color: white !important;
+}
 /* Firefox */
 * {
   scrollbar-width: thin;
