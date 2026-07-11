@@ -1,6 +1,6 @@
 site_name: Nuklear-cr
-site_url: https://github.com/guidipolito/nuklear-cr
-repo_url: https://github.com/guidipolito/nuklear-cr
+site_url: https://guidipolito.github.io/nuklear-cr/
+repo_url: https://github.com/guidipolito/nuklear-cr/
 edit_uri: blob/master/docs/
 
 theme:
