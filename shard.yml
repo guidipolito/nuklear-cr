@@ -9,5 +9,8 @@ crystal: '>= 1.20.1'
 dependencies:
  sdl3:
    github: sleepinginsomniac/sdl3.cr
+ opengl:
+    gitlab: arctic-fox/opengl.cr
+    branch: gl-4.6-core
 
 license: MIT

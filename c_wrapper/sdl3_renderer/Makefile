@@ -3,7 +3,7 @@ CC ?= gcc
 CFLAGS += -std=gnu99 -Wall -Wextra -fPIC
 CFLAGS += -O0 -g
 
-TARGET = libnuklear.so
+TARGET = build/libnuklear.so
 
 SRC = main.c
 OBJ = build/nuklear.o

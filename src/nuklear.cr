@@ -256,20 +256,20 @@ class Nuklear
     end
   end
 
-  def chart_lines(amostras, min = 0, max = 100)
-    LibNK.chart_begin(@ctx, LibNK::ChartType::NkChartLines, amostras, min, max)
+  def chart_lines(samples, min = 0, max = 100)
+    LibNK.chart_begin(@ctx, LibNK::ChartType::NkChartLines, samples, min, max)
     yield
     LibNK.chart_end @ctx
   end
 
-  def chart_column(amostras, min = 0, max = 100)
-    LibNK.chart_begin(@ctx, LibNK::ChartType::NkChartColumn, amostras, min, max)
+  def chart_column(samples, min = 0, max = 100)
+    LibNK.chart_begin(@ctx, LibNK::ChartType::NkChartColumn, samples, min, max)
     yield
     LibNK.chart_end @ctx
   end
 
-  def chart_max(amostras, min = 0, max = 100)
-    LibNK.chart_begin(@ctx, LibNK::ChartType::NkChartMax, amostras, min, max)
+  def chart_max(samples, min = 0, max = 100)
+    LibNK.chart_begin(@ctx, LibNK::ChartType::NkChartMax, samples, min, max)
     yield
     LibNK.chart_end @ctx
   end

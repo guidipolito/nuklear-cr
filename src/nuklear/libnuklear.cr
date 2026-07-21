@@ -1,4 +1,3 @@
-@[Link("nuklear")]
 lib LibNK
   alias Size = LibC::SizeT
   alias PluginFilter = (Pointer(TextEdit), UInt32) -> Bool

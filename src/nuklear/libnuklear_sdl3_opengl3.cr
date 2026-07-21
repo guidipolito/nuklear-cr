@@ -1,7 +1,7 @@
 require "./libnuklear"
 require "sdl3"
 
-@[Link("nuklear")]
+@[Link("nuklear", ldflags: "-L#{__DIR__}/../../c_wrapper/sdl3_opengl3/build/ -lnuklear -Wl,-rpath,#{__DIR__}/../../c_wrapper/sdl3_opengl3/build/")]
 lib LibNK
   fun sdl_init = nk_sdl_init(win : LibSdl3::Window*) : Context*
   fun sdl_font_stash_begin = nk_sdl_font_stash_begin(ctx : FontAtlas**)

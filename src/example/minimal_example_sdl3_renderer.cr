@@ -12,13 +12,14 @@ nk = Nuklear.new window
 count = 0
 
 # ==================
-loop do
+running = true
+while running
   nk.input_begin
   while event = Sdl3::Events.poll
     nk.handle_input event
     case event
     when Sdl3::Event::Quit
-      break
+      running = false
     end
   end
   nk.input_end
@@ -33,6 +34,7 @@ loop do
     nk.label "Count: " + count.to_s
   end
   # ==================
+  nk.frame_start
   nk.frame_end
   renderer.present
 end

@@ -2,7 +2,7 @@ require "./libnuklear"
 require "sdl3"
 require "sdl3/image"
 
-@[Link("nuklear")]
+@[Link("nuklear", ldflags: "-L#{__DIR__}/../../c_wrapper/sdl3_renderer/build/ -lnuklear -Wl,-rpath,#{__DIR__}/../../c_wrapper/sdl3_renderer/build/")]
 lib LibNK
   fun sdl_init = nk_sdl_init(win: LibSdl3::Window*, renderer : LibSdl3::Renderer*, allocator : Allocator) : Context*
   fun sdl_allocator = nk_sdl_allocator() : Allocator
