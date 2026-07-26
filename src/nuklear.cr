@@ -5,14 +5,17 @@ class Nuklear
   property ctx
   property current_window = ""
 
+  # Begin collecting input for the frame, should be called before handle_input calls
   def input_begin
     LibNK.input_begin @ctx
   end
 
+  # End the input collection, should be called before rendering the current frame
   def input_end
     LibNK.input_end @ctx
   end
 
+  # Create a row with N cols, its dynamic if col_width not set
   def row(cols = 1, height = 0, col_width = 0)
     if col_width != 0
       return LibNK.layout_row_static @ctx, height, col_width, cols
@@ -22,6 +25,7 @@ class Nuklear
   end
 
 
+  # Creates a window receiving a block to be inside its context
   def window(name, x = 0, y = 0, width = 400, height = 300,
       title = name, movable = true, scalable = true, minimizable=true, closable = true, border = true,
       scrollbar = true, scrollbar_autohide = false, background = false, scale_left = false,
@@ -42,7 +46,7 @@ class Nuklear
     flags |= LibNK::PanelFlags::NoInput if no_input
 
 
-    open = LibNK.begin_titled(@ctx, name, title, rect, flags)
+    open = title ? LibNK.begin_titled(@ctx, name, title, rect, flags) : LibNK.begin(@ctx, name,  rect, flags)
     @current_window = name
     if open
       yield
@@ -53,31 +57,45 @@ class Nuklear
     open
   end
 
+  def group(name)
+    flags = 0u32
+    LibNK.group_begin @ctx, name, flags
+    yield
+    LibNK.group_end @ctx
+  end
+
+  # Returns if window of name has focus
   def window_has_focus?(name) : Bool
     LibNK.window_has_focus @ctx, name
   end
 
+  # Returns if window of name is being hovered
   def window_hovered?(name) : Bool
     LibNK.window_is_hovered @ctx, name
   end
 
+  # Returns if window of name is closed/was closed if called in the end of frame
   def window_closed?(name) : Bool
     LibNK.window_is_closed @ctx, name
   end
 
+  # Returns if window is minimized, just having its title and not rendering the content
   def window_hidden?(name)
     LibNK.window_is_hidden @ctx, name
   end
 
+  # Returns if the window is active, having focus
   def window_active?(name)
     LibNK.window_is_active @ctx, name
   end
 
+  # Returns if any of the window is hovered
   def window_any_hovered?
     LibNK.window_is_any_hovered @ctx
   end
 
-
+  # Create a label with text
+  # Accepts align = :left | :center | :right
   def label(text = "", align = :left)
     alignment = LibNK::TextAlignment::TEXT_LEFT
     alignment = LibNK::TextAlignment::TEXT_RIGHT if align == :right
@@ -88,10 +106,12 @@ class Nuklear
   @tree_states = { } of String => Pointer(LibNK::CollapseStates)
   @tree_stack = [] of String
 
-  def tree(title, collapsed = true, is_tab = false)
+  # Creates a collapsable tre node and accept a block for building its content
+  # If 2 tree nodes has the same title in a given window, you may have to pass an id
+  def tree(title, collapsed = true, is_tab = false, id = title)
     type = is_tab ? LibNK::TreeType::NkTreeTab : LibNK::TreeType::NkTreeNode
     state = collapsed ? LibNK::CollapseStates::NkMinimized :  LibNK::CollapseStates::NkMaximized
-    hash = @current_window+"_$_"+@tree_stack.join("_$_")+title
+    hash = @current_window+"_$_"+@tree_stack.join("_$_")+id
     unless @tree_states.has_key? hash
       @tree_states[hash] ||= Pointer.malloc(1, state)
     end
@@ -103,14 +123,17 @@ class Nuklear
     end
   end
 
+  # Create a button and return if it was clicked
   def button(text)
     LibNK.button_label(@ctx, text)
   end
 
+  # Create a checkbox and return if it was checked
   def check(text, val : Bool) : Bool
     LibNK.check_label @ctx, text, val
   end
 
+  # Create a option button and return if it was checked
   def option(text, val : Bool) : Bool
     LibNK.option_label @ctx, text, val
   end

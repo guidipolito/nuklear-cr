@@ -12,10 +12,6 @@ Nuklear-cr provides a lightweight immediate-mode GUI for use with the following 
 An immediate-mode GUI means that it does not hold the state of its widgets. Instead, 
 you call the functions for the elements you want to draw, and they are drawn every frame.
 
-<details class="info">
-<summary>Example</summary>
-
-
 ```crystal
 # Outside the render loop
 count = 0
@@ -31,12 +27,5 @@ end
 nk.button returns true if the button was clicked during the current frame. Since everything is redrawn every frame, 
 there is no need to worry about updating the value of a given label instance.
 
-</details>
-
 ## Installation
-
-Work in progress
-
-## API Reference
-
-::: Nuklear
+TODO
